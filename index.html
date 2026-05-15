@@ -112,12 +112,20 @@
   }
   .hero p { color: var(--text2); font-size: 1.1rem; max-width: 520px; margin: 0 auto; }
 
-  /* MAIN GRID */
+  /* MAIN GRID — top row: color picker | preview (side by side) */
   .main-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px; margin-bottom: 24px;
+  }
+  @media(max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+  /* BOTTOM ROW — theme full width */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 24px; margin-bottom: 32px;
   }
-  @media(max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
 
   /* CARD */
   .card {
@@ -194,7 +202,7 @@
 
   /* PREVIEW */
   .preview-box {
-    width: 100%; height: 260px; border-radius: 18px;
+    width: 100%; height: 100%; min-height: 220px; border-radius: 18px;
     display: flex; align-items: center; justify-content: center;
     position: relative; overflow: hidden;
     box-shadow: 0 10px 50px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
@@ -388,8 +396,8 @@
   }
   .pulse { animation: pulse-border 0.5s ease-out; }
 
-  .full-card { grid-column: 1 / -1; }
-  @media(max-width:768px) { .full-card { grid-column: 1; } }
+  .preview-card { display: flex; flex-direction: column; }
+  .preview-box { flex: 1; min-height: 200px; }
 
   .ai-badge {
     display: inline-flex; align-items: center; gap: 5px;
@@ -429,28 +437,45 @@
     <p>Choose a theme or your own colors — get stunning gradients instantly. Click any color to copy its code.</p>
   </div>
 
+  <!-- TOP ROW: Color Picker | Live Preview (side by side) -->
   <div class="main-grid">
-    <!-- LEFT: CONTROLS -->
+    <!-- LEFT: CUSTOM COLOR PICKER -->
     <div class="card">
-      <div class="section-label">Step 1</div>
-      <div class="card-title">Choose a Theme</div>
-      <div class="theme-grid" id="themeGrid"></div>
+      <div class="section-label">Color Selection</div>
+      <div class="card-title">Pick Your Colors <span class="ai-badge">✦ Auto Preview</span></div>
 
-      <div style="margin-top: 24px;">
-        <div class="section-label">Step 2</div>
-        <div class="card-title">Gradient Type & Direction</div>
-        <div class="type-group" id="typeGroup">
-          <button class="type-btn active" data-type="linear">Linear</button>
-          <button class="type-btn" data-type="radial">Radial</button>
-          <button class="type-btn" data-type="conic">Conic</button>
+      <div class="color-stops-section">
+        <div class="stops-label">Color Stops (2–4 colors) — changes apply instantly</div>
+        <div class="stops-row" id="stopsRow"></div>
+        <div style="margin-top: 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <button class="add-stop-btn" id="addStopBtn">＋ Add Color</button>
+          <button class="btn btn-secondary" id="useCustomBtn" style="padding: 9px 18px; font-size: 0.82rem;">Apply Colors</button>
         </div>
-        <div class="dir-group" id="dirGroup">
-          <button class="dir-btn active" data-deg="135deg">↗ Diagonal</button>
-          <button class="dir-btn" data-deg="to right">→ Right</button>
-          <button class="dir-btn" data-deg="to bottom">↓ Down</button>
-          <button class="dir-btn" data-deg="to left">← Left</button>
-          <button class="dir-btn" data-deg="to top">↑ Up</button>
-          <button class="dir-btn" data-deg="225deg">↙ Other</button>
+      </div>
+
+      <div style="margin-top: 22px;">
+        <div class="stops-label">Quick Palette — click to add</div>
+        <div id="quickPalette" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;"></div>
+      </div>
+
+      <div style="margin-top: 22px;">
+        <div class="stops-label">Gradient Type</div>
+        <div class="type-group" id="typeGroup" style="margin-bottom: 0;">
+          <button class="type-btn active" data-type="linear">⟶ Linear</button>
+          <button class="type-btn" data-type="radial">◎ Radial</button>
+          <button class="type-btn" data-type="conic">⟳ Conic</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 18px;">
+        <div class="stops-label">Direction</div>
+        <div class="dir-group" id="dirGroup" style="margin-bottom: 0;">
+          <button class="dir-btn active" data-deg="135deg">↗</button>
+          <button class="dir-btn" data-deg="to right">→</button>
+          <button class="dir-btn" data-deg="to bottom">↓</button>
+          <button class="dir-btn" data-deg="to left">←</button>
+          <button class="dir-btn" data-deg="to top">↑</button>
+          <button class="dir-btn" data-deg="225deg">↙</button>
         </div>
       </div>
 
@@ -460,38 +485,27 @@
       </div>
     </div>
 
-    <!-- RIGHT: CUSTOM COLORS -->
-    <div class="card">
-      <div class="section-label">Custom Colors</div>
-      <div class="card-title">Pick Your Own Colors <span class="ai-badge">✦ Auto Preview</span></div>
-
-      <div class="color-stops-section">
-        <div class="stops-label">Color Stops (2–4 colors)</div>
-        <div class="stops-row" id="stopsRow"></div>
-        <div style="margin-top: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-          <button class="add-stop-btn" id="addStopBtn">＋ Add Color</button>
-          <button class="btn btn-secondary" id="useCustomBtn" style="padding: 8px 16px; font-size: 0.82rem;">Use These Colors</button>
-        </div>
-      </div>
-
-      <div style="margin-top: 24px;">
-        <div class="stops-label">Quick Color Palette</div>
-        <div id="quickPalette" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;"></div>
-      </div>
-    </div>
-
-    <!-- PREVIEW - full width -->
-    <div class="card full-card">
+    <!-- RIGHT: LIVE PREVIEW -->
+    <div class="card preview-card">
       <div class="section-label">Live Preview</div>
       <div class="card-title">Your Gradient</div>
       <div class="preview-box" id="previewBox">
-        <div class="preview-label" id="previewLabel">Select a theme to generate</div>
+        <div class="preview-label" id="previewLabel">Pick colors to preview</div>
       </div>
       <div class="code-box" id="cssCode" onclick="copyCSS()" title="Click to copy full CSS">
         <span id="cssCodeText">background: linear-gradient(135deg, #7c6fff, #ff6fff);</span>
         <span class="copy-hint">📋 click to copy</span>
       </div>
       <div class="swatches-row" id="swatchesRow"></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW: Theme Chooser -->
+  <div class="bottom-grid">
+    <div class="card" style="grid-column: 1 / -1;">
+      <div class="section-label">Theme Library</div>
+      <div class="card-title">Choose a Theme</div>
+      <div class="theme-grid" id="themeGrid"></div>
     </div>
   </div>
 
